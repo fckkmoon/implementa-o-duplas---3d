@@ -1,6 +1,8 @@
 using UnityEngine;
 
 public class Player : MonoBehaviour {
+  
+    bool alive = true;
 
     CharacterController controller;
 
@@ -11,6 +13,9 @@ public class Player : MonoBehaviour {
     float forwardSpeed = 6f;
     float strafeSpeed = 6f;
 
+    float horizontalInput;
+    [SerializeField] float horizontalMultiplier = 2;
+
     float gravity;
     float jumpSpeed;
     float maxJumpHeight = 2f;
@@ -18,6 +23,7 @@ public class Player : MonoBehaviour {
 
     void Start() {
 
+         if (!alive) return;
         controller = GetComponent<CharacterController>();
 
         gravity = (-2 * maxJumpHeight) / (timeToMaxHeight * timeToMaxHeight);
@@ -27,6 +33,9 @@ public class Player : MonoBehaviour {
 
     void Update() {
 
+        if (transform.position.y < -5) {
+            Die();
+        }
 
         float forwardInput = Input.GetAxisRaw("Vertical");
         float strafeInput = Input.GetAxisRaw("Horizontal");
@@ -49,11 +58,23 @@ public class Player : MonoBehaviour {
             vertical = Vector3.zero;
         }
 
-        Vector3 finalVelocity = forward + strafe + vertical;
+         Vector3 finalVelocity = forward + strafe + vertical;
 
-        controller.Move(finalVelocity * Time.deltaTime);
+         controller.Move(finalVelocity * Time.deltaTime);
 
+         horizontalInput = Input.GetAxis("Horizontal");
+
+         
 
     }
 
+    public void Die ()
+    {
+        alive = false;
+        // Restart the game
+        Invoke("Restart", 2);
+    }
+
+    
 }
+
