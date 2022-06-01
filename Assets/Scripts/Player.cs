@@ -1,17 +1,18 @@
 using UnityEngine;
+ using UnityEngine.SceneManagement; 
 
 public class Player : MonoBehaviour {
   
     bool alive = true;
-
+    
+    Vector3 vertical;
+    public float velocidade = 0.01f;
+    Vector3 m;
     CharacterController controller;
 
-    Vector3 forward;
-    Vector3 strafe;
-    Vector3 vertical;
+    
 
-    float forwardSpeed = 6f;
-    float strafeSpeed = 6f;
+    
 
     float horizontalInput;
     [SerializeField] float horizontalMultiplier = 2;
@@ -21,30 +22,61 @@ public class Player : MonoBehaviour {
     float maxJumpHeight = 2f;
     float timeToMaxHeight = 0.5f;
 
+
+    void Movimento(Vector3 m)
+    {
+		transform.Translate(m);
+
+	}
+
     void Start() {
 
-         if (!alive) return;
+        if (!alive) return;
         controller = GetComponent<CharacterController>();
 
         gravity = (-2 * maxJumpHeight) / (timeToMaxHeight * timeToMaxHeight);
         jumpSpeed = (2 * maxJumpHeight) / timeToMaxHeight;
 
+        m.x = 0.0f;
+	    m.y = 0.0f;
+	    m.z = 0.0f;
+
     }
 
     void Update() {
 
+        if (Input.GetKey (KeyCode.W)) {
+			m.x = -velocidade;
+			Movimento(m);
+			m.z = 0.0f;
+			m.y = 0.0f;
+   }  
+        if (Input.GetKey (KeyCode.S)) {
+
+			m.x = velocidade;
+			Movimento(m);
+			m.z = 0.0f;
+			m.y = 0.0f;
+
+		}  
+        if (Input.GetKey (KeyCode.D)) {
+			m.z = velocidade;
+			Movimento(m);
+			m.y = 0.0f;
+			m.x = 0.0f;
+			
+		}  
+        if (Input.GetKey (KeyCode.A)) {
+			m.z = -velocidade;
+			Movimento(m);
+			m.y = 0.0f;
+			m.x = 0.0f;
+		}
         if (transform.position.y < -5) {
             Die();
         }
 
-        float forwardInput = Input.GetAxisRaw("Vertical");
-        float strafeInput = Input.GetAxisRaw("Horizontal");
-
-        // force = input * speed * direction
-        forward = forwardInput * forwardSpeed * transform.forward;
-        strafe = strafeInput * strafeSpeed * transform.right;
-
-        vertical += gravity * Time.deltaTime * Vector3.up;
+        
 
         if(controller.isGrounded) {
             vertical = Vector3.down;
@@ -58,22 +90,22 @@ public class Player : MonoBehaviour {
             vertical = Vector3.zero;
         }
 
-         Vector3 finalVelocity = forward + strafe + vertical;
-
-         controller.Move(finalVelocity * Time.deltaTime);
-
-         horizontalInput = Input.GetAxis("Horizontal");
+        
 
          
 
     }
 
-    public void Die ()
+    
+    public void Die()
     {
+        
         alive = false;
         // Restart the game
-        Invoke("Restart", 2);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name); 
+        Debug.Log(alive);
     }
+
 
     
 }

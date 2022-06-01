@@ -8,11 +8,13 @@ public class Obstaculos : MonoBehaviour {
 
 	private void Start () {
         player = GameObject.FindObjectOfType<Player>();
+        Debug.Log("Start");
 	}
 
     private void OnCollisionEnter (Collision collision)
     {
-        if (collision.gameObject.name == "Player") {
+        Debug.Log("Collision");
+        if (collision.gameObject.name == "Cabeça") {
             // Kill the player
             player.Die();
         }
